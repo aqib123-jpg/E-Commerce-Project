@@ -1,219 +1,3 @@
-// const express = require('express');
-// const mysql = require('mysql2');
-// const bodyParser = require('body-parser');
-// const cors = require('cors');
-
-// const app = express();
-// app.use(cors()); // Allows React frontend to communicate with this backend
-// app.use(bodyParser.json()); // Parses JSON data from the request body
-
-// // MySQL database connection
-// const connection = mysql.createConnection({
-//   host: 'localhost',
-//   user: 'root',
-//   password: 'MySqL321@', // Your MySQL root password
-//   database: 'INFORMATION' // Create this database in MySQL later
-// });
-
-// connection.connect((err) => {
-//   if (err) throw err;
-//   console.log('Connected to MySQL Database!');
-// });
-
-// app.get('/getWishlist/:userId', (req, res) => {
-//   const userId = req.params.userId;
-//   const query = 'SELECT DATA, PRICE FROM WISHLIST WHERE FORLOGINID = ?';
-
-//   connection.query(query, [userId], (err, results) => {
-//     if (err) return res.status(500).send('Database error');
-//     if (results.length > 0) {
-//       try {
-//         const wishlist = results.map(row => ({
-//           name: JSON.parse(row.DATA),  
-//           price: row.PRICE
-//         }));
-//         res.status(200).send(wishlist);
-//         // const wishlistLength = results.length;
-//         // res.status(200).send({ wishlist, length: wishlistLength });
-//       } catch (error) {
-//         res.status(500).send('Data parsing error');
-//       }
-//     } else {
-//       res.status(404).send('No wishlist found');
-//     }
-//   });
-// });
-
-
-// app.get('/getCart/:userId', (req, res) => {
-//   const userId = req.params.userId;
-//   const query = 'SELECT DATA, PRICE FROM CART WHERE FORLOGINID = ?';
-
-//   connection.query(query, [userId], (err, results) => {
-//     if (err) return res.status(500).send('Database error');
-//     if (results.length > 0) {
-//       try {
-//         const cart = results.map(row => ({
-//           name: JSON.parse(row.DATA),  
-//           price: row.PRICE
-//         }));
-//         res.status(200).send(cart);
-//         // const wishlistLength = results.length;
-//         // res.status(200).send({ wishlist, length: wishlistLength });
-//       } catch (error) {
-//         res.status(500).send('Data parsing error');
-//       }
-//     } else {
-//       res.status(404).send('No wishlist found');
-//     }
-//   });
-// });
-
-// app.get('/getWishlistLength/:userId', (req, res) => {
-//   console.log("Here here");
-//   const userId = req.params.userId;
-//   const query = 'SELECT COUNT(*) AS wishlistLength FROM WISHLIST WHERE FORLOGINID = ?';
-//   // console.log("LLength : ",query.length);
-//   connection.query(query, [userId], (err, results) => {
-//     if (err) {
-//       return res.status(500).send('Database error');
-//     }
-    
-//     if (results.length > 0) {
-//       res.status(200).send({ length: results[0].wishlistLength });
-//     } else {
-//       res.status(404).send('No wishlist found');
-//     }
-//   });
-// });
-
-// app.get('/getCartLength/:userId', (req, res) => {
-//   console.log("Here here");
-//   const userId = req.params.userId;
-//   const query = 'SELECT COUNT(*) AS cartLength FROM CART WHERE FORLOGINID = ?';
-//   // console.log("LLength : ",query.length);
-//   connection.query(query, [userId], (err, results) => {
-//     if (err) {
-//       return res.status(500).send('Database error');
-//     }
-    
-//     if (results.length > 0) {
-//       res.status(200).send({ length: results[0].cartLength});
-//     } else {
-//       res.status(404).send('No wishlist found');
-//     }
-//   });
-// });
-
-// app.post('/api/addData', (req, res) => {
-//   const { uName, uPassword, action } = req.body;
-
-//   if (action === 'signup') {
-//     const checkQuery = 'SELECT * FROM FORLOGIN WHERE NAME = ? AND PASSWORD = ?';
-//     connection.query(checkQuery, [uName,uPassword ], (err, results) => {
-//       if (err) return res.status(500).send('Database error');
-//       if (results.length > 0) {
-//         return res.status(409).send('Data already exists');
-//       } else {
-//         const insertQuery = 'INSERT INTO FORLOGIN (NAME, PASSWORD) VALUES (?, ?)';
-//         connection.query(insertQuery, [uName, uPassword], (err, results) => {
-//           if (err) return res.status(500).send('Database error');
-//           const userId = results.insertId; 
-//           res.status(200).send({ message: 'Data inserted successfully', userId });
-//         });
-//       }
-//     });
-//   } else if (action === 'login') {
-//     const loginQuery = 'SELECT * FROM FORLOGIN WHERE NAME = ? AND PASSWORD = ?';
-//     connection.query(loginQuery, [uName, uPassword], (err, results) => {
-//       if (err) return res.status(500).send('Database error');
-//       if (results.length > 0) {
-//         const userId = results[0].ID;  // <-- Get the ID of the logged-in user
-//         res.status(200).send({ message: 'Login successful', userId });
-//       } else {
-//         res.status(409).send('Invalid credentials');
-//       }
-//     });
-//   }
-// });
-// app.post('/api/addToWishlist', (req, res) => {
-//   const { userId, wishlistData, wishlistPrice } = req.body;  // Get userId, wishlistData (name), and wishlistPrice from frontend
-
-//   const insertOrUpdateWishlistQuery = `
-//     INSERT INTO WISHLIST (FORLOGINID, DATA, PRICE) 
-//     VALUES (?, ?, ?) 
-//     ON DUPLICATE KEY UPDATE DATA = VALUES(DATA), PRICE = VALUES(PRICE)`;
-
-//   connection.query(insertOrUpdateWishlistQuery, [userId, JSON.stringify(wishlistData), wishlistPrice], (err, results) => {
-//     if (err) return res.status(500).send('Database error');
-//     res.status(200).send('Wishlist item added/updated successfully');
-//   });
-// });
-
-// app.post('/api/addToCart', (req, res) => {
-//   const { userId, cartData, cartPrice } = req.body;  // Get userId, wishlistData (name), and wishlistPrice from frontend
-
-//   const insertOrUpdatecartQuery = `
-//     INSERT INTO CART (FORLOGINID, DATA, PRICE) 
-//     VALUES (?, ?, ?) 
-//     ON DUPLICATE KEY UPDATE DATA = VALUES(DATA), PRICE = VALUES(PRICE)`;
-
-//   connection.query(insertOrUpdatecartQuery, [userId, JSON.stringify(cartData), cartPrice], (err, results) => {
-//     if (err) return res.status(500).send('Database error');
-//     res.status(200).send('Cart item added/updated successfully');
-//   });
-// });
-
-// app.post('/api/deleteFromWishlist', (req, res) => {
-//   const { userId, itemName } = req.body;
-//   const quotedItemName = `"${itemName}"`;  // Adding quotes around itemName
-//   console.log("User ID:", userId);
-//   console.log("Item Name:", quotedItemName);
-
-//   const deleteWishlistQuery = `DELETE FROM WISHLIST WHERE FORLOGINID = ? AND DATA = ?`;
-//   connection.query(deleteWishlistQuery, [userId, quotedItemName], (err, results) => {
-//     if (err) {
-//       return res.status(500).send('Database error');
-//     }
-//     if (results.affectedRows > 0) {
-//       res.status(200).send('Wishlist item deleted successfully');
-//     } else {
-//       res.status(404).send('Wishlist item not found');
-//     }
-//   });
-// });
-
-// app.post('/api/deleteFromCart', (req, res) => {
-//   const { userId, itemName } = req.body;
-//   const quotedItemName = `"${itemName}"`;  // Adding quotes around itemName
-//   console.log("User ID:", userId);
-//   console.log("Item Name:", quotedItemName);
-
-//   const deleteWishlistQuery = `DELETE FROM CART WHERE FORLOGINID = ? AND DATA = ?`;
-//   connection.query(deleteWishlistQuery, [userId, quotedItemName], (err, results) => {
-//     if (err) {
-//       return res.status(500).send('Database error');
-//     }
-//     if (results.affectedRows > 0) {
-//       res.status(200).send('Cart item deleted successfully');
-//     } else {
-//       res.status(404).send('Cart item not found');
-//     }
-//   });
-// });
-
-// app.listen(3002, () => {
-//   console.log('Server running on port 3002');
-// });
-
-
-
-
-
-
-
-
-
 const express = require('express');
 const mysql = require('mysql2');
 const bodyParser = require('body-parser');
@@ -222,14 +6,10 @@ const nodemailer = require('nodemailer');
 require('dotenv').config();
 
 const app = express();
-app.use(cors()); // Allows React frontend to communicate with this backend
-app.use(bodyParser.json()); // Parses JSON data from the request body
+app.use(cors()); 
+app.use(bodyParser.json()); 
 
 const connection = mysql.createConnection({
-  // host: 'localhost',
-  // user: 'root',
-  // password: 'MySqL321@', 
-  // database: 'INFORMATION'
   host: process.env.DB_HOST, 
   user: process.env.DB_USER, 
   password: process.env.DB_PASSWORD, 
@@ -254,8 +34,6 @@ app.get('/getWishlist/:userId', (req, res) => {
           price: row.PRICE
         }));
         res.status(200).send(wishlist);
-        // const wishlistLength = results.length;
-        // res.status(200).send({ wishlist, length: wishlistLength });
       } catch (error) {
         res.status(500).send('Data parsing error');
       }
@@ -290,10 +68,8 @@ app.get('/getCart/:userId', (req, res) => {
 
 
 app.get('/getWishlistLength/:userId', (req, res) => {
-  console.log("Here here");
   const userId = req.params.userId;
   const query = 'SELECT COUNT(*) AS wishlistLength FROM WISHLIST WHERE FORLOGINID = ?';
-  // console.log("LLength : ",query.length);
   connection.query(query, [userId], (err, results) => {
     if (err) {
       return res.status(500).send('Database error');
@@ -308,10 +84,8 @@ app.get('/getWishlistLength/:userId', (req, res) => {
 });
 
 app.get('/getCartLength/:userId', (req, res) => {
-  console.log("Here here");
   const userId = req.params.userId;
   const query = 'SELECT COUNT(*) AS cartLength FROM CART WHERE FORLOGINID = ?';
-  // console.log("LLength : ",query.length);
   connection.query(query, [userId], (err, results) => {
     if (err) {
       return res.status(500).send('Database error');
@@ -327,28 +101,6 @@ app.get('/getCartLength/:userId', (req, res) => {
 
 app.post('/api/addData', (req, res) => {
   const { uName, uPassword, action ,uEmail } = req.body;
-  // if (action === 'signup') {
-  //   console.log("server js signup");
-  //   const checkQuery = 'SELECT * FROM FORLOGIN WHERE EMAIL = ? OR NAME = ?';
-  //   connection.query(checkQuery, [uEmail, uName], (err, results) => {
-  //     if (err) return res.status(500).send('Database error');
-  //     if (results.length > 0) {
-  //       const existingUser = results[0];
-  //       if (existingUser.EMAIL === uEmail) {
-  //         return res.status(409).send('Email already exists');
-  //       } else if (existingUser.NAME === uName) {
-  //         return res.status(409).send('Username already exists');
-  //       }
-  //     } else {
-  //       const insertQuery = 'INSERT INTO FORLOGIN (NAME, PASSWORD, EMAIL) VALUES (?, ?, ?)';
-  //       connection.query(insertQuery, [uName, uPassword, uEmail], (err, results) => {
-  //         if (err) return res.status(500).send('Database error');
-  //         const userId = results.insertId;
-  //         res.status(200).send({ message: 'Data inserted successfully', userId });
-  //       });
-  //     }
-  //   });
-  // }
   if (action === 'signup') {
     const checkQuery = 'SELECT * FROM FORLOGIN WHERE BINARY EMAIL = ? OR BINARY NAME = ?';
     connection.query(checkQuery, [uEmail,uName], (err, results) => {
@@ -374,26 +126,23 @@ app.post('/api/addData', (req, res) => {
     connection.query(loginQuery, [uName, uPassword], (err, results) => {
       if (err) return res.status(500).send('Database error');
       if (results.length > 0) {
-        const userId = results[0].ID;  // <-- Get the ID of the logged-in user
+        const userId = results[0].ID; 
         res.status(200).send({ message: 'Login successful', userId });
       } else {
         res.status(409).send('Invalid credentials');
       }
     });
   } else if (action === 'forgetPassword') {
-    console.log("Today Today action : ",action);
     connection.query('SELECT EMAIL, PASSWORD FROM FORLOGIN WHERE NAME = ?', [uName], (err, results) => {
       if (err) {
         console.error('Error fetching user details: ', err);
-        return res.status(500).send('Server error'); // Return an error response
+        return res.status(500).send('Server error'); 
       }
       if (results.length === 0) {
-        console.log('User not found.');
-        return res.status(404).send('User not found'); // Return user not found response
+        return res.status(404).send('User not found'); 
       }
       const userEmail = results[0].EMAIL;
       const userPassword = results[0].PASSWORD;
-      console.log("Ye mila Email : ",userEmail);
       let transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
@@ -408,14 +157,12 @@ app.post('/api/addData', (req, res) => {
         subject: 'Your Forgotten Password',
         text: `Hi ${uName},\n\nYour password is: ${userPassword}\n\nPlease keep it safe!`,
       };
-      console.log("Response is Here : ",mailOptions);
       transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
           console.error('Error sending email:', error);
           return res.status(500).send('Error in Sending Email'); 
         }
-        console.log('Email sent: ' + info.response);
-        return res.status(200).send('Password sent to your email'); // Success response
+        return res.status(200).send('Password sent to your email'); 
       });
     });
   }
@@ -423,7 +170,7 @@ app.post('/api/addData', (req, res) => {
 
 
 app.post('/api/addToWishlist', (req, res) => {
-  const { userId, wishlistData, wishlistPrice } = req.body;  // Get userId, wishlistData (name), and wishlistPrice from frontend
+  const { userId, wishlistData, wishlistPrice } = req.body;  
 
   const insertOrUpdateWishlistQuery = `
     INSERT INTO WISHLIST (FORLOGINID, DATA, PRICE) 
@@ -437,7 +184,7 @@ app.post('/api/addToWishlist', (req, res) => {
 });
 
 app.post('/api/addToCart', (req, res) => {
-  const { userId, cartData, cartPrice } = req.body;  // Get userId, wishlistData (name), and wishlistPrice from frontend
+  const { userId, cartData, cartPrice } = req.body;  
 
   const insertOrUpdatecartQuery = `
     INSERT INTO CART (FORLOGINID, DATA, PRICE) 
@@ -452,10 +199,7 @@ app.post('/api/addToCart', (req, res) => {
 
 app.post('/api/deleteFromWishlist', (req, res) => {
   const { userId, itemName } = req.body;
-  const quotedItemName = `"${itemName}"`;  // Adding quotes around itemName
-  console.log("User ID:", userId);
-  console.log("Item Name:", quotedItemName);
-
+  const quotedItemName = `"${itemName}"`;  
   const deleteWishlistQuery = `DELETE FROM WISHLIST WHERE FORLOGINID = ? AND DATA = ?`;
   connection.query(deleteWishlistQuery, [userId, quotedItemName], (err, results) => {
     if (err) {
@@ -471,10 +215,7 @@ app.post('/api/deleteFromWishlist', (req, res) => {
 
 app.post('/api/deleteFromCart', (req, res) => {
   const { userId, itemName } = req.body;
-  const quotedItemName = `"${itemName}"`;  // Adding quotes around itemName
-  console.log("User ID:", userId);
-  console.log("Item Name:", quotedItemName);
-
+  const quotedItemName = `"${itemName}"`;  
   const deleteWishlistQuery = `DELETE FROM CART WHERE FORLOGINID = ? AND DATA = ?`;
   connection.query(deleteWishlistQuery, [userId, quotedItemName], (err, results) => {
     if (err) {
@@ -489,7 +230,6 @@ app.post('/api/deleteFromCart', (req, res) => {
 });
 
 
-//can be deletted
 app.post('/api/resetPassword', (req, res) => {
   const { id, password } = req.body;
   const query = 'UPDATE FORLOGIN SET PASSWORD = ? WHERE ID = ?';
@@ -505,9 +245,6 @@ app.post('/api/resetPassword', (req, res) => {
   });
 });
 
-//can be deleted
-
-//SHOW DATA TO ADMIN
 
 app.get('/api/users', (req, res) => {
   const query = 'SELECT NAME, EMAIL,PASSWORD FROM FORLOGIN';
@@ -519,10 +256,8 @@ app.get('/api/users', (req, res) => {
   });
 });
 
-// Route to delete a user by ID
 app.delete('/api/users/:email', (req, res) => {
-  const userEmail = req.params.email; // Get user ID from the route parameter
-  // alert(userId);
+  const userEmail = req.params.email; 
   const query = 'DELETE FROM FORLOGIN WHERE EMAIL = ?';
   
   connection.query(query, [userEmail], (err, results) => {
@@ -533,11 +268,6 @@ app.delete('/api/users/:email', (req, res) => {
   });
 });
 
-
-
-//SHOW DATA TO ADMIN
-
-//BACKEND HOMEPRODUCTS TABLE
 
 app.get('/api/getTableData/:table', (req, res) => {
   const table=req.params.table;
@@ -622,261 +352,6 @@ app.get('/api/search', (req, res) => {
   }
 });
 
-//BACKEND HOMEPRODUCTS TABLE
-
 app.listen(3002, () => {
   console.log('Server running on port 3002');
 });
-
-
-
-
-
-
-
-
-// const express = require('express');
-// const mysql = require('mysql2');
-// const bodyParser = require('body-parser');
-// const cors = require('cors');
-
-// const app = express();
-// app.use(cors()); // Allows React frontend to communicate with this backend
-// app.use(bodyParser.json()); // Parses JSON data from the request body
-
-// // MySQL database connection
-// const connection = mysql.createConnection({
-//   host: 'localhost',
-//   user: 'root',
-//   password: 'MySqL321@', // Your MySQL root password
-//   database: 'INFORMATION' // Create this database in MySQL later
-// });
-
-// connection.connect((err) => {
-//   if (err) throw err;
-//   console.log('Connected to MySQL Database!');
-// });
-
-// app.get('/getWishlist/:userId', (req, res) => {
-//   const userId = req.params.userId;
-//   const query = 'SELECT DATA, PRICE FROM WISHLIST WHERE FORLOGINID = ?';
-
-//   connection.query(query, [userId], (err, results) => {
-//     if (err) return res.status(500).send('Database error');
-//     if (results.length > 0) {
-//       try {
-//         const wishlist = results.map(row => ({
-//           name: JSON.parse(row.DATA),  
-//           price: row.PRICE
-//         }));
-//         res.status(200).send(wishlist);
-//         // const wishlistLength = results.length;
-//         // res.status(200).send({ wishlist, length: wishlistLength });
-//       } catch (error) {
-//         res.status(500).send('Data parsing error');
-//       }
-//     } else {
-//       res.status(404).send('No wishlist found');
-//     }
-//   });
-// });
-
-
-// app.get('/getCart/:userId', (req, res) => {
-//   const userId = req.params.userId;
-//   const query = 'SELECT DATA, PRICE FROM CART WHERE FORLOGINID = ?';
-
-//   connection.query(query, [userId], (err, results) => {
-//     if (err) return res.status(500).send('Database error');
-//     if (results.length > 0) {
-//       try {
-//         const cart = results.map(row => ({
-//           name: JSON.parse(row.DATA),  
-//           price: row.PRICE
-//         }));
-//         res.status(200).send(cart);
-//         // const wishlistLength = results.length;
-//         // res.status(200).send({ wishlist, length: wishlistLength });
-//       } catch (error) {
-//         res.status(500).send('Data parsing error');
-//       }
-//     } else {
-//       res.status(404).send('No wishlist found');
-//     }
-//   });
-// });
-
-// app.get('/getWishlistLength/:userId', (req, res) => {
-//   console.log("Here here");
-//   const userId = req.params.userId;
-//   const query = 'SELECT COUNT(*) AS wishlistLength FROM WISHLIST WHERE FORLOGINID = ?';
-//   // console.log("LLength : ",query.length);
-//   connection.query(query, [userId], (err, results) => {
-//     if (err) {
-//       return res.status(500).send('Database error');
-//     }
-    
-//     if (results.length > 0) {
-//       res.status(200).send({ length: results[0].wishlistLength });
-//     } else {
-//       res.status(404).send('No wishlist found');
-//     }
-//   });
-// });
-
-// app.get('/getCartLength/:userId', (req, res) => {
-//   console.log("Here here");
-//   const userId = req.params.userId;
-//   const query = 'SELECT COUNT(*) AS cartLength FROM CART WHERE FORLOGINID = ?';
-//   connection.query(query, [userId], (err, results) => {
-//     if (err) {
-//       return res.status(500).send('Database error');
-//     }
-//     if (results.length > 0) {
-//       res.status(200).send({ length: results[0].cartLength});
-//     } else {
-//       res.status(404).send('No wishlist found');
-//     }
-//   });
-// });
-
-// app.post('/api/addData', (req, res) => {
-//   const { uName, uPassword, action , uEmail } = req.body;
-//   if (action === 'signup') {
-//     const checkQuery = 'SELECT * FROM FORLOGIN WHERE EMAIL = ? OR NAME = ?';
-//     connection.query(checkQuery, [uEmail,uName], (err, results) => {
-//       if (err) return res.status(500).send('Database error');
-//       if (results.length > 0) {
-//         if (results[0].EMAIL === uEmail) {
-//           return res.status(409).send('Email already exists');
-//         } else if (results[0].NAME === uName) {
-//           return res.status(409).send('Username already exists');
-//         }
-//       } else {
-//         const insertQuery = 'INSERT INTO FORLOGIN (NAME, PASSWORD , EMAIL) VALUES (?, ?, ?)';
-//         connection.query(insertQuery, [uName, uPassword, uEmail], (err, results) => {
-//           if (err) return res.status(500).send('Database error');
-//           const userId = results.insertId; 
-//           res.status(200).send({ message: 'Data inserted successfully', userId });
-//         });
-//       }
-//     });
-//   } else if (action === 'login') {
-//     const loginQuery = 'SELECT * FROM FORLOGIN WHERE NAME = ? AND PASSWORD = ?';
-//     connection.query(loginQuery, [uName, uPassword], (err, results) => {
-//       if (err) return res.status(500).send('Database error');
-//       if (results.length > 0) {
-//         const userId = results[0].ID;  // <-- Get the ID of the logged-in user
-//         res.status(200).send({ message: 'Login successful', userId });
-//       } else {
-//         res.status(409).send('Invalid credentials');
-//       }
-//     });
-//   } 
-//   else if (action === 'forgetPassword') {
-//     connection.query('SELECT EMAIL, PASSWORD FROM FORLOGIN WHERE NAME = ?', [uName], (err, results) => {
-//       if (err) {
-//         console.error('Error fetching user details: ', err);
-//         return res.status(500).json({ message: 'Server error' }); // Return an error response
-//       }
-//       if (results.length === 0) {
-//         console.log('User not found.');
-//         return res.status(404).json({ message: 'User not found' }); // Return user not found response
-//       }
-//       const userEmail = results[0].EMAIL;
-//       const userPassword = results[0].PASSWORD;
-//       console.log("Ye mila Email : ",userEmail);
-//       let transporter = nodemailer.createTransport({
-//         service: 'gmail',
-//         auth: {
-//           user: 'aqibk5867@gmail.com',
-//           pass: 'ixvlfokljodzyloh', 
-//         },
-//       });
-//       let mailOptions = {
-//         from: 'aqibk5867@gmail.com',
-//         to: userEmail,
-//         subject: 'Your Forgotten Password',
-//         text: `Hi ${uName},\n\nYour password is: ${userPassword}\n\nPlease keep it safe!`,
-//       };
-//       transporter.sendMail(mailOptions, (error, info) => {
-//         if (error) {
-//           console.error('Error sending email:', error);
-//           return res.status(500).json({ message: 'Error sending email' }); 
-//         }
-//         console.log('Email sent: ' + info.response);
-//         return res.status(200).json({ message: 'Password sent to your email' }); // Success response
-//       });
-//     });
-//   }
-// });
-
-// app.post('/api/addToWishlist', (req, res) => {
-//   const { userId, wishlistData, wishlistPrice } = req.body;  // Get userId, wishlistData (name), and wishlistPrice from frontend
-
-//   const insertOrUpdateWishlistQuery = `
-//     INSERT INTO WISHLIST (FORLOGINID, DATA, PRICE) 
-//     VALUES (?, ?, ?) 
-//     ON DUPLICATE KEY UPDATE DATA = VALUES(DATA), PRICE = VALUES(PRICE)`;
-
-//   connection.query(insertOrUpdateWishlistQuery, [userId, JSON.stringify(wishlistData), wishlistPrice], (err, results) => {
-//     if (err) return res.status(500).send('Database error');
-//     res.status(200).send('Wishlist item added/updated successfully');
-//   });
-// });
-
-// app.post('/api/addToCart', (req, res) => {
-//   const { userId, cartData, cartPrice } = req.body;  // Get userId, wishlistData (name), and wishlistPrice from frontend
-
-//   const insertOrUpdatecartQuery = `
-//     INSERT INTO CART (FORLOGINID, DATA, PRICE) 
-//     VALUES (?, ?, ?) 
-//     ON DUPLICATE KEY UPDATE DATA = VALUES(DATA), PRICE = VALUES(PRICE)`;
-
-//   connection.query(insertOrUpdatecartQuery, [userId, JSON.stringify(cartData), cartPrice], (err, results) => {
-//     if (err) return res.status(500).send('Database error');
-//     res.status(200).send('Cart item added/updated successfully');
-//   });
-// });
-
-// app.post('/api/deleteFromWishlist', (req, res) => {
-//   const { userId, itemName } = req.body;
-//   const quotedItemName = `"${itemName}"`;  // Adding quotes around itemName
-//   console.log("User ID:", userId);
-//   console.log("Item Name:", quotedItemName);
-
-//   const deleteWishlistQuery = `DELETE FROM WISHLIST WHERE FORLOGINID = ? AND DATA = ?`;
-//   connection.query(deleteWishlistQuery, [userId, quotedItemName], (err, results) => {
-//     if (err) {
-//       return res.status(500).send('Database error');
-//     }
-//     if (results.affectedRows > 0) {
-//       res.status(200).send('Wishlist item deleted successfully');
-//     } else {
-//       res.status(404).send('Wishlist item not found');
-//     }
-//   });
-// });
-
-// app.post('/api/deleteFromCart', (req, res) => {
-//   const { userId, itemName } = req.body;
-//   const quotedItemName = `"${itemName}"`;  // Adding quotes around itemName
-//   console.log("User ID:", userId);
-//   console.log("Item Name:", quotedItemName);
-
-//   const deleteWishlistQuery = `DELETE FROM CART WHERE FORLOGINID = ? AND DATA = ?`;
-//   connection.query(deleteWishlistQuery, [userId, quotedItemName], (err, results) => {
-//     if (err) {
-//       return res.status(500).send('Database error');
-//     }
-//     if (results.affectedRows > 0) {
-//       res.status(200).send('Cart item deleted successfully');
-//     } else {
-//       res.status(404).send('Cart item not found');
-//     }
-//   });
-// });
-
-// app.listen(3002, () => {
-//   console.log('Server running on port 3002');
-// });
